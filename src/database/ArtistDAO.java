@@ -32,14 +32,14 @@ public class ArtistDAO extends DatabaseConnection {
 
     }
 
-    public void delete(Artist a) {
+    public void deleteById(int id) {
 
         try {
 
             PreparedStatement ps;
             // TODA VALIDACIÓN VA AQUÍ
             ps = getConnection().prepareStatement("DELETE FROM artist WHERE id=?");
-            ps.setInt(1, a.getId());
+            ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
             System.getLogger(ArtistDAO.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);

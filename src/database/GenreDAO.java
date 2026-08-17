@@ -28,14 +28,14 @@ public class GenreDAO extends DatabaseConnection {
 
     }
 
-    public void delete(Genre g) {
+    public void deleteById(int id) {
 
         try {
 
             PreparedStatement ps;
             // TODA VALIDACIÓN VA AQUÍ
             ps = getConnection().prepareStatement("DELETE FROM genre WHERE id=?");
-            ps.setInt(1, g.getId());
+            ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
             System.getLogger(GenreDAO.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);

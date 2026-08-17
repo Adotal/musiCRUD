@@ -20,11 +20,11 @@ public class AlbumDAO extends DatabaseConnection {
             PreparedStatement ps;
             // TODA VALIDACIÓN VA AQUÍ
             ps = getConnection().prepareStatement(
-                    "INSERT INTO album(discography, title, release_date, image_url) values(?,?,?,?)");
+                    "INSERT INTO album(discography_id, title, release_date, image_url) values(?,?,?,?)");
             ps.setInt(1, a.getDiscography());
             ps.setString(2, a.getTitle());
             ps.setString(3, a.getReleaseDate());
-            ps.setString(4, a.getReleaseDate());
+            ps.setString(4, a.getImageUrl());
             ps.executeUpdate();
         } catch (SQLException ex) {
             System.getLogger(AlbumDAO.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
@@ -32,14 +32,14 @@ public class AlbumDAO extends DatabaseConnection {
 
     }
 
-    public void delete(Album a) {
+    public void deleteById(int id) {
 
         try {
 
             PreparedStatement ps;
             // TODA VALIDACIÓN VA AQUÍ
             ps = getConnection().prepareStatement("DELETE FROM album WHERE id=?");
-            ps.setInt(1, a.getId());
+            ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
             System.getLogger(AlbumDAO.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
@@ -53,11 +53,11 @@ public class AlbumDAO extends DatabaseConnection {
             PreparedStatement ps;
             // TODA VALIDACIÓN VA AQUÍ
             ps = getConnection().prepareStatement(
-                    "UPDATE album SET discography=?, title=?, release_date=?, image_url=?  WHERE id=?");
+                    "UPDATE album SET discography_id=?, title=?, release_date=?, image_url=?  WHERE id=?");
             ps.setInt(1, a.getDiscography());
             ps.setString(2, a.getTitle());
             ps.setString(3, a.getReleaseDate());
-            ps.setString(4, a.getReleaseDate());
+            ps.setString(4, a.getImageUrl());
             ps.setInt(5, a.getId());
             ps.executeUpdate();
         } catch (SQLException ex) {

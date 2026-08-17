@@ -15,9 +15,6 @@ public class SongTabView extends JPanel {
         private final String[] songColumns = {
                         "ID", "Género", "Álbum", "Título", "Letras URL", "Duración", "Fecha de lanzamiento"
         };
-        // private final String[] songFields = {
-        // "Género", "Álbum", "Título", "Letras URL", "Duración", "Fecha de lanzamiento"
-        // };
 
         private JComboBox<Genre> cbGenre = new JComboBox<>();
         private JComboBox<Album> cbAlbum = new JComboBox<>();
@@ -44,6 +41,8 @@ public class SongTabView extends JPanel {
 
                 crudPanel = new CrudPanel("Canciones", songColumns, fields);
                 add(crudPanel, BorderLayout.CENTER);
+
+                
 
         }
 

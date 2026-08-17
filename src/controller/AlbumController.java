@@ -1,59 +1,28 @@
 package controller;
 
 import java.util.List;
-import java.util.Map;
-
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import database.AlbumDAO;
-import database.GenreDAO;
-import database.SongDAO;
 import model.Album;
-import model.Genre;
-import model.Song;
-import view.SongTabView;
+import view.AlbumTabView;
 
-public class SongController {
+public class AlbumController {
 
-    private final SongTabView view;
-    private final SongDAO songDAO = new SongDAO();
-    private final GenreDAO genreDAO = new GenreDAO();
+    private final AlbumTabView view;
     private final AlbumDAO albumDAO = new AlbumDAO();
 
-    public SongController(SongTabView view) {
+    public AlbumController(AlbumTabView view) {
 
         this.view = view;
-
-        // Retrieve data for JComboBox
-        populateDropdowns();
 
         // Retrieve and print data from DB
         loadTableData();
 
         // Attach listeners to the view components
         initListeners();
-    }
-
-    public void populateDropdowns() {
-
-        // Load Genres into JComboBox
-        List<Genre> genres = genreDAO.getAll();
-        DefaultComboBoxModel<Genre> genreModel = new DefaultComboBoxModel<>();
-        // Class::staticMethod (equals to x -> Class.staticMethod(x)). (IDE Refactor)
-        genres.forEach(genreModel::addElement);
-        view.getCbGenre().setModel(genreModel);
-
-        // Load Albums into JComboBox
-        List<Album> albums = albumDAO.getAll();
-        DefaultComboBoxModel<Album> albumModel = new DefaultComboBoxModel<>();
-        albums.forEach(albumModel::addElement);
-        view.getCbAlbum().setModel(albumModel);
     }
 
     private void initListeners() {
@@ -108,17 +77,15 @@ public class SongController {
         model.setRowCount(0);
 
         // Fetch data from database
-        List<Song> songsList = songDAO.getAll();
+        List<Album> albumsList = albumDAO.getAll();
 
-        for (Song song : songsList) {
+        for (Album album : albumsList) {
             model.addRow(new Object[] {
-                    song.getId(),
-                    song.getGenre().getName(),
-                    song.getAlbum().getTitle(),
-                    song.getTitle(),
-                    song.getLyrics(),
-                    song.getDuration(),
-                    song.getReleaseDate()
+                    album.getId(),
+                    album.getDiscography(),
+                    album.getTitle(),
+                    album.getReleaseDate(),
+                    album.getImageUrl()
             });
         }
     }
@@ -130,17 +97,14 @@ public class SongController {
 
         // If selected Yes in JOptionPane
         if (0 == resp) {
-            // Extract selected FK objects directly from CrudPanel
-            Genre selectedGenre = view.getCrudPanel().getSelectedComboObject("Género");
-            Album selectedAlbum = view.getCrudPanel().getSelectedComboObject("Álbum");
 
+            int discographyId = Integer.parseInt(view.getCrudPanel().getTextFieldValue("ID discografía"));
             String title = view.getCrudPanel().getTextFieldValue("Título");
-            String lyrics = view.getCrudPanel().getTextFieldValue("Letras URL");
-            String duration = view.getCrudPanel().getTextFieldValue("Duración");
             String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento");
+            String imageUrl = view.getCrudPanel().getTextFieldValue("Imagen URL");
 
-            Song song = new Song(0, selectedGenre, selectedAlbum, title, lyrics, duration, releaseDate);
-            songDAO.insert(song);
+            Album album = new Album(0, discographyId, title, releaseDate, imageUrl);
+            albumDAO.insert(album);
 
             // Fetch and populate table again
             loadTableData();
@@ -162,19 +126,16 @@ public class SongController {
         // If selected Yes in JOptionPane
         if (0 == resp) {
 
-            // Extract selected FK objects directly from CrudPanel
-            Genre selectedGenre = view.getCrudPanel().getSelectedComboObject("Género");
-            Album selectedAlbum = view.getCrudPanel().getSelectedComboObject("Álbum");
-
+            int discographyId = Integer.parseInt(view.getCrudPanel().getTextFieldValue("ID discografía"));
             String title = view.getCrudPanel().getTextFieldValue("Título");
-            String lyrics = view.getCrudPanel().getTextFieldValue("Letras URL");
-            String duration = view.getCrudPanel().getTextFieldValue("Duración");
             String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento");
+            String imageUrl = view.getCrudPanel().getTextFieldValue("Imagen URL");
+
 
             int selectedRow = view.getCrudPanel().getTable().getSelectedRow();
             int id = Integer.parseInt(view.getCrudPanel().getTable().getValueAt(selectedRow, 0).toString());
-            Song song = new Song(id, selectedGenre, selectedAlbum, title, lyrics, duration, releaseDate);
-            songDAO.update(song);
+            Album album = new Album(id, discographyId, title, releaseDate, imageUrl);
+            albumDAO.update(album);
 
             // Fetch and populate table again
             loadTableData();
@@ -200,7 +161,7 @@ public class SongController {
             int selectedRow = view.getCrudPanel().getTable().getSelectedRow();
             int id = Integer.parseInt(view.getCrudPanel().getTable().getValueAt(selectedRow, 0).toString());
             // Delete the model from DB
-            songDAO.deleteById(id);
+            albumDAO.deleteById(id);
 
             // Fetch data again
             loadTableData();

@@ -6,11 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class HomeView extends JFrame {
-
-    private final String tabsString[] = {
-            "Canciones", "Álbumes", "Artistas", "Géneros"
-    };
-
+    
     private JMenuBar jMenuBar;
     private JMenu jMenuOptions, jMenuAbout;
     private JMenuItem jMenuItemExit, jMenuItemAuthor, jMenuItemGithub, jMenuItemToggleTheme;
