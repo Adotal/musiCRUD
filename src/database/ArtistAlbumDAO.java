@@ -1,5 +1,6 @@
 package database;
 
+import java.awt.List;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -121,6 +122,28 @@ public class ArtistAlbumDAO extends DatabaseConnection {
             return null;
         }
         return artist;
+    }
+
+    public ArrayList<Album> getAlbumsByArtist(int id) {
+
+        String sql = "SELECT ab.id, ab.title FROM artist_album a INNER JOIN album ab ON a.album_id=ab.id WHERE a.artist_id = ?";
+        ArrayList<Album> albumList = new ArrayList<>();
+        try {
+            PreparedStatement ps = getConnection().prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                albumList.add(
+                        new Album(
+                                rs.getInt("id"),
+                                rs.getString("title")));
+            }
+        } catch (SQLException ex) {
+            System.getLogger(ArtistDAO.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+            return null;
+        }
+        return albumList;
+
     }
 
 }

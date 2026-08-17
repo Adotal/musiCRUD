@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -43,6 +44,11 @@ public class CrudPanel extends JPanel {
     private Map<String, JComponent> fieldsMap = new HashMap<>();
 
     public CrudPanel(String title, String[] columns, FormField[] fields) {
+        this(title, columns, fields, null);
+    }
+
+    public CrudPanel(String title, String[] columns, FormField[] fields, JComponent extraComponent) {
+
         setLayout(new BorderLayout());
         setBackground(AppColors.BACKGROUND_WHITE);
         setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -79,6 +85,13 @@ public class CrudPanel extends JPanel {
         northPanel.add(formPanel);
         northPanel.add(Box.createVerticalStrut(15));
         northPanel.add(buttonPanel);
+
+        // Insert extra component above buttons if provided
+        if (extraComponent != null) {
+            extraComponent.setAlignmentX(LEFT_ALIGNMENT);
+            northPanel.add(Box.createVerticalStrut(15));
+            northPanel.add(extraComponent);
+        }
 
         add(northPanel, BorderLayout.NORTH);
 
@@ -190,7 +203,8 @@ public class CrudPanel extends JPanel {
         return "";
     }
 
-    // Returns selected item of JComboBox, is Template Type> because it can return any class
+    // Returns selected item of JComboBox, is Template Type> because it can return
+    // any class
     public <T> T getSelectedComboObject(String label) {
         JComponent comp = fieldsMap.get(label);
         if (comp instanceof JComboBox) {
@@ -262,23 +276,7 @@ public class CrudPanel extends JPanel {
         btnClear.addActionListener(l);
     }
 
-    // public String getFieldValue(String label) {
-    //     JTextField field = fieldsMap.get(label);
-    //     return field != null ? field.getText().trim() : "";
-    // }
-
-    // public void setFieldValue(String label, String value) {
-    //     if (!fieldsMap.containsKey(label))
-    //         return;
-    //     JTextField field = fieldsMap.get(label);
-    //     field.setText(value);
-    // }
-
     public Map<String, JComponent> getFieldsMap() {
         return fieldsMap;
     }
-
-    // public void clearFields() {
-    //     fieldsMap.values().forEach(field -> field.setText(""));
-    // }
 }

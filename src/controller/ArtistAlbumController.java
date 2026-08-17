@@ -87,6 +87,16 @@ public class ArtistAlbumController {
             // Convert visual index to real model index (useful for filtering, ordering)
             int modelRow = table.convertRowIndexToModel(table.getSelectedRow());
 
+            // Get current artist ID and load related albums list
+            int id = Integer.parseInt(view.getCrudPanel().getTable().getValueAt(modelRow, 0).toString());
+
+            // Fetch albums related to artist
+            List<Album> albumsRelated = artistAlbumDAO.getAlbumsByArtist(id);   
+            // Clear old albums
+            view.getAlbumsListModel().clear();
+            albumsRelated.forEach(view.getAlbumsListModel()::addElement);     
+            System.out.println(view.getAlbumsListModel().elementAt(0));       
+
             // Iterate over fields
             view.getCrudPanel().getFieldsMap().forEach((fieldName, textField) -> {
 
@@ -139,12 +149,6 @@ public class ArtistAlbumController {
             // Fetch and populate table again
             loadTableData();
             view.getCrudPanel().clearFields();
-
-            // Select last item (the just created)
-            int lastRow = view.getCrudPanel().getTable()
-                    .convertRowIndexToView(view.getCrudPanel().getTableModel().getRowCount()
-                            - 1);
-            view.getCrudPanel().getTable().setRowSelectionInterval(lastRow, lastRow);
         }
     }
 
