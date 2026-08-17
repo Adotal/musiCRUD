@@ -4,6 +4,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
 import view.AlbumTabView;
+import view.ArtistAlbumTabView;
 import view.ArtistTabView;
 import view.GenreTabView;
 import view.HomeView;
@@ -16,6 +17,7 @@ public class HomeController {
     private AlbumController albumController;
     private ArtistController artistController;
     private GenreController genreController;
+    private ArtistAlbumController artistAlbumController;
 
     public HomeController(HomeView view) {
         this.view = view;
@@ -47,6 +49,12 @@ public class HomeController {
         GenreTabView genreTabView = new GenreTabView();
         genreController = new GenreController(genreTabView);
         view.getTabbedPane().addTab("Genéros", genreTabView);
+
+        // Relation artist-album
+        ArtistAlbumTabView artistAlbumTabView = new ArtistAlbumTabView();
+        artistAlbumController = new ArtistAlbumController(artistAlbumTabView);
+        view.getTabbedPane().addTab("Artistas-Álbumes", artistAlbumTabView);
+
 
         JTabbedPane tabbedPane = view.getTabbedPane();
         tabbedPane.addChangeListener(e -> {

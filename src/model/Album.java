@@ -8,8 +8,13 @@ public class Album {
     private String releaseDate;
     private String imageUrl;
 
-    public Album(){
-        
+    public Album() {
+
+    }
+
+    public Album(int id, String title) {
+        this.id = id;
+        this.title = title;
     }
 
     public Album(int id, int discography, String title, String releaseDate, String imageUrl) {

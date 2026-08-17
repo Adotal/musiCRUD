@@ -12,6 +12,11 @@ public class Artist {
 
     }
 
+    public Artist(int id, String artisiticName) {
+        this.id = id;
+        this.artisticName = artisiticName;
+    }
+
     public Artist(int id, String artisiticName, String name, String lastnames, String countryOfOrigin) {
         this.id = id;
         this.artisticName = artisiticName;
