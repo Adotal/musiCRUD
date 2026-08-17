@@ -57,7 +57,7 @@ public class HomeController {
             // If access to the tab, reload ComboBox (for if a new FK was added)
             if ("Canciones".equals(tabTitle)) {
 
-                songController.populateDropdowns();;
+                songController.populateDropdowns();
             } 
         });
 
