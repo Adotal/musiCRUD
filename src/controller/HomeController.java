@@ -1,5 +1,8 @@
 package controller;
 
+import java.awt.Desktop;
+import java.net.URI;
+
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
@@ -55,7 +58,6 @@ public class HomeController {
         artistAlbumController = new ArtistAlbumController(artistAlbumTabView);
         view.getTabbedPane().addTab("Artistas-Álbumes", artistAlbumTabView);
 
-
         JTabbedPane tabbedPane = view.getTabbedPane();
         tabbedPane.addChangeListener(e -> {
             // Obtain tab title
@@ -66,7 +68,7 @@ public class HomeController {
             if ("Canciones".equals(tabTitle)) {
 
                 songController.populateDropdowns();
-            } 
+            }
         });
 
     }
@@ -76,11 +78,37 @@ public class HomeController {
         view.addExitListener(e -> System.exit(0));
         view.addThemeToggleListener(e -> System.out.println("Changing theme..."));
         view.addOpenGitHubListener(e -> {
-            System.out.println("Opening GitHub link...");
+
+            int resp = JOptionPane.showConfirmDialog(view, "Redirigir al GitHub Fuente del proyecto");
+
+            if (0 == resp) {
+                openURL("https://github.com/Adotal/musiCRUD");
+            }
         });
         view.addAuthorListener(e -> {
             JOptionPane.showMessageDialog(view, "Adro Yael Ornelas Ornelas");
         });
 
+    }
+
+    public static void openURL(String urlString) {
+        try {
+            // Try to use standard Java method if supported
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                Desktop.getDesktop().browse(new URI(urlString));
+            } else {
+                // Linux alternative using xdg-open
+                Runtime runtime = Runtime.getRuntime();
+                runtime.exec(new String[] { "xdg-open", urlString });
+            }
+        } catch (Exception ex) {
+            // If xdg-open fails
+            try {
+                Runtime.getRuntime().exec(new String[] { "fallback-platform-command", urlString });
+                System.getLogger("Could'nt open URL");
+            } catch (Exception e) {
+                ex.printStackTrace();
+            }
+        }
     }
 }

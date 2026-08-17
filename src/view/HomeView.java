@@ -4,9 +4,10 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 public class HomeView extends JFrame {
-    
+
     private JMenuBar jMenuBar;
     private JMenu jMenuOptions, jMenuAbout;
     private JMenuItem jMenuItemExit, jMenuItemAuthor, jMenuItemGithub, jMenuItemToggleTheme;
@@ -49,6 +50,19 @@ public class HomeView extends JFrame {
         tabbedPane = new JTabbedPane();
         // Add the tabbed pane to the center of the main window
         add(tabbedPane, BorderLayout.CENTER);
+
+        // Add Shorcuts to items
+        KeyStroke keyStrokeF5 = KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0);
+        jMenuItemAuthor.setAccelerator(keyStrokeF5);
+
+        KeyStroke keyStrokeSHIFTQ = KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.SHIFT_DOWN_MASK);
+        jMenuItemExit.setAccelerator(keyStrokeSHIFTQ);
+
+        KeyStroke keyStrokeCTRLG = KeyStroke.getKeyStroke(KeyEvent.VK_G, KeyEvent.CTRL_DOWN_MASK);
+        jMenuItemGithub.setAccelerator(keyStrokeCTRLG);
+
+        KeyStroke keyStrokeALTT = KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.ALT_DOWN_MASK);
+        jMenuItemToggleTheme.setAccelerator(keyStrokeALTT);
     }
 
     // Setters to add events
