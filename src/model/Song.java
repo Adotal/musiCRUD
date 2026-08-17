@@ -24,15 +24,6 @@ public class Song {
         this.releaseDate = date;
     }
 
-    public Song(int genre_id, int album_id, String title, String lyrics, String duration, String date) {        
-        this.genre = new Genre(genre_id, null);
-        this.album = new Album(album_id, 1, null, null, null);
-        this.title = title;
-        this.lyrics = lyrics;
-        this.duration = duration;
-        this.releaseDate = date;
-    }
-
     public int getId() {
         return id;
     }

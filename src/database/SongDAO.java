@@ -57,16 +57,18 @@ public class SongDAO extends DatabaseConnection {
         try {
 
             PreparedStatement ps;
+            System.out.println("UPDATE");
             // TODA VALIDACIÓN VA AQUÍ
-            ps = getConnection().prepareStatement(
-                    "UPDATE song SET genre_id=?, album_id=?, title=?, lyrics=?, duration=?, release_date=? WHERE id=?");
+
+            ps = getConnection().prepareStatement("UPDATE song SET genre_id=?, album_id=?, title=?, lyrics=?, duration=?, release_date=? WHERE id=?");
             ps.setInt(1, a.getGenre().getId());
             ps.setInt(2, a.getAlbum().getId());
             ps.setString(3, a.getTitle());
             ps.setString(4, a.getLyrics());
             ps.setString(5, a.getDuration());
             ps.setString(6, a.getReleaseDate());
-            ps.setInt(5, a.getId());
+            ps.setInt(7, a.getId());
+
             ps.executeUpdate();
         } catch (SQLException ex) {
             System.getLogger(SongDAO.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);

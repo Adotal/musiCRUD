@@ -74,7 +74,7 @@ public class AlbumDAO extends DatabaseConnection {
 
             PreparedStatement ps;
             ps = getConnection()
-                    .prepareStatement("SELECT id, discography, title, release_date, image_url FROM album");
+                    .prepareStatement("SELECT id, discography_id, title, release_date, image_url FROM album");
 
             ResultSet rs;
             rs = ps.executeQuery();
@@ -85,7 +85,7 @@ public class AlbumDAO extends DatabaseConnection {
                 albums.add(
                         new Album(
                                 rs.getInt("id"),
-                                rs.getInt("discography"),
+                                rs.getInt("discography_id"),
                                 rs.getString("title"),
                                 rs.getString("release_date"),
                                 rs.getString("image_url")));

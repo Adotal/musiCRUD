@@ -15,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,6 +29,7 @@ import javax.swing.table.JTableHeader;
 
 import util.AppColors;
 import util.Fonts;
+import util.ui.FormField;
 import util.ui.StyledJButton;
 
 // Reusable Panel for each CRUD tab
@@ -40,7 +42,7 @@ public class CrudPanel extends JPanel {
     private JButton btnCreate, btnUpdate, btnDelete, btnClear;
     private Map<String, JComponent> fieldsMap = new HashMap<>();
 
-    public CrudPanel(String title, String[] columns, String[] fieldLabels) {
+    public CrudPanel(String title, String[] columns, FormField[] fields) {
         setLayout(new BorderLayout());
         setBackground(AppColors.BACKGROUND_WHITE);
         setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -66,7 +68,7 @@ public class CrudPanel extends JPanel {
         lblTitle.setAlignmentX(LEFT_ALIGNMENT);
 
         // Generate dynamic components
-        JPanel formPanel = createDynamicForm(fieldLabels);
+        JPanel formPanel = createDynamicForm(fields);
         JPanel buttonPanel = createButtonPanel();
 
         formPanel.setAlignmentX(LEFT_ALIGNMENT);
@@ -104,7 +106,7 @@ public class CrudPanel extends JPanel {
     }
 
     // Dynamically builds the form using GridBagLayout
-    private JPanel createDynamicForm(String[] labels) {
+    private JPanel createDynamicForm(FormField[] fields) {
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.WHITE);
@@ -121,12 +123,15 @@ public class CrudPanel extends JPanel {
         gbc.insets = new Insets(8, 8, 8, 8); // Extra spacing between inputs
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        for (int i = 0; i < labels.length; i++) {
+        for (int i = 0; i < fields.length; i++) {
+
+            FormField field = fields[i];
+
             // Label (Left Column)
             gbc.gridx = 0;
             gbc.gridy = i;
             gbc.weightx = 0.0;
-            JLabel label = new JLabel(labels[i] + ":");
+            JLabel label = new JLabel(field.getLabel() + ":");
             label.setFont(Fonts.TEXT_FONT);
             label.setForeground(AppColors.TEXT_DARK);
             panel.add(label, gbc);
@@ -135,15 +140,16 @@ public class CrudPanel extends JPanel {
             gbc.gridx = 1;
             gbc.gridy = i;
             gbc.weightx = 1.0;
-            JTextField textField = new JTextField(20);
 
-            // Fill hasmap of form
-            fieldsMap.put(labels[i], textField);
-
-            textField.setFont(Fonts.TEXT_FONT);
+            JComponent component = field.getComponent();
+            component.setFont(Fonts.TEXT_FONT);
             // Gives text fields a taller, modern height
-            textField.setPreferredSize(new Dimension(textField.getPreferredSize().width, 32));
-            panel.add(textField, gbc);
+            component.setPreferredSize(new Dimension(component.getPreferredSize().width, 32));
+
+            // Add component to hashMap
+            fieldsMap.put(field.getLabel(), component);
+
+            panel.add(component, gbc);
         }
 
         return panel;
@@ -172,7 +178,66 @@ public class CrudPanel extends JPanel {
         return panel;
     }
 
+    // -----------Component Value Helpers---------------
+
+    public String getTextFieldValue(String label) {
+        JComponent comp = fieldsMap.get(label);
+        if (comp instanceof JTextField) {
+            JTextField textField = (JTextField) comp;
+            return textField.getText().trim();
+        }
+
+        return "";
+    }
+
+    // Returns selected item of JComboBox, is Template Type> because it can return any class
+    public <T> T getSelectedComboObject(String label) {
+        JComponent comp = fieldsMap.get(label);
+        if (comp instanceof JComboBox) {
+            JComboBox comboBox = (JComboBox) comp;
+            return (T) comboBox.getSelectedItem();
+        }
+        return null;
+    }
+
+    public void setFieldValue(String label, Object value) {
+        JComponent comp = fieldsMap.get(label);
+        if (comp instanceof JTextField) {
+            JTextField textField = (JTextField) comp;
+            textField.setText(value != null ? value.toString() : "");
+        } else if (comp instanceof JComboBox) {
+
+            JComboBox comboBox = (JComboBox) comp;
+            if (value == null)
+                return;
+            for (int i = 0; i < comboBox.getItemCount(); i++) {
+                Object item = comboBox.getItemAt(i);
+                if (item.toString().equalsIgnoreCase(value.toString())) {
+                    comboBox.setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void clearFields() {
+        fieldsMap.values().forEach(comp -> {
+            if (comp instanceof JTextField) {
+
+                JTextField textField = (JTextField) comp;
+                textField.setText("");
+            } else if (comp instanceof JComboBox) {
+
+                JComboBox comboBox = (JComboBox) comp;
+                if (comboBox.getItemCount() > 0) {
+                    comboBox.setSelectedIndex(0);
+                }
+            }
+        });
+    }
+
     // Getters for Controller Usage
+
     public DefaultTableModel getTableModel() {
         return tableModel;
     }
@@ -181,38 +246,39 @@ public class CrudPanel extends JPanel {
         return table;
     }
 
-    public void addBtnCreateListener(ActionListener actionListener){
-        btnCreate.addActionListener(actionListener);
+    public void addBtnCreateListener(ActionListener l) {
+        btnCreate.addActionListener(l);
     }
 
-    public void addBtnUpdateListener(ActionListener actionListener){
-        btnUpdate.addActionListener(actionListener);
-    }
-    public void addBtnDeleteListener(ActionListener actionListener){
-        btnDelete.addActionListener(actionListener);
+    public void addBtnUpdateListener(ActionListener l) {
+        btnUpdate.addActionListener(l);
     }
 
-    public void addBtnClearListener(ActionListener actionListener){
-        btnClear.addActionListener(actionListener);
+    public void addBtnDeleteListener(ActionListener l) {
+        btnDelete.addActionListener(l);
     }
 
-    public String getFieldValue(String label) {
-        JTextField field = fieldsMap.get(label);
-        return field != null ? field.getText().trim() : "";
+    public void addBtnClearListener(ActionListener l) {
+        btnClear.addActionListener(l);
     }
 
-    public void setFieldValue(String label, String value) {
-        if (!fieldsMap.containsKey(label))
-            return;
-        JTextField field = fieldsMap.get(label);
-        field.setText(value);
-    }
+    // public String getFieldValue(String label) {
+    //     JTextField field = fieldsMap.get(label);
+    //     return field != null ? field.getText().trim() : "";
+    // }
 
-    public Map<String, JTextField> getFieldsMap() {
+    // public void setFieldValue(String label, String value) {
+    //     if (!fieldsMap.containsKey(label))
+    //         return;
+    //     JTextField field = fieldsMap.get(label);
+    //     field.setText(value);
+    // }
+
+    public Map<String, JComponent> getFieldsMap() {
         return fieldsMap;
     }
 
-    public void clearFields() {
-        fieldsMap.values().forEach(field -> field.setText(""));
-    }
+    // public void clearFields() {
+    //     fieldsMap.values().forEach(field -> field.setText(""));
+    // }
 }
