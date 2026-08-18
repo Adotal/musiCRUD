@@ -31,11 +31,17 @@ public class Song {
     public void setId(int id) {
         this.id = id;
     }
+    // Overload methods
+    public void setId(String id){
+        this.id = Integer.parseInt(id);
+    }
 
     public Genre getGenre() {
         return genre;
     }
-
+    public void setGenre(int id, String name) {
+        this.genre = new Genre(id, name);
+    }
     public void setGenre(Genre genre) {
         this.genre = genre;
     }
@@ -47,6 +53,11 @@ public class Song {
     public void setAlbum(Album album) {
         this.album = album;
     }
+
+    public void setAlbum(int id, String title) {
+        this.album = new Album(id, title);
+    }
+
 
     public String getTitle() {
         return title;
@@ -84,4 +95,5 @@ public class Song {
     public String toString() {
         return title; // Displayed in JComboBox
     }
+
 }

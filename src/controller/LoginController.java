@@ -36,9 +36,7 @@ public class LoginController {
     public void submitLogin() {
 
         String email = view.getTxtEmail().getText();
-        String password = new String(view.getTxtPassword().getPassword());
-
-        System.out.println(email + " " + password);
+        String password = new String(view.getTxtPassword().getPassword());        
 
         if (email.equals("1") && password.equals("1")) {
 

@@ -92,10 +92,10 @@ public class ArtistAlbumController {
 
             // Fetch albums related to artist
             List<Album> albumsRelated = artistAlbumDAO.getAlbumsByArtist(id);   
+            
             // Clear old albums
             view.getAlbumsListModel().clear();
-            albumsRelated.forEach(view.getAlbumsListModel()::addElement);     
-            System.out.println(view.getAlbumsListModel().elementAt(0));       
+            albumsRelated.forEach(view.getAlbumsListModel()::addElement);                 
 
             // Iterate over fields
             view.getCrudPanel().getFieldsMap().forEach((fieldName, textField) -> {

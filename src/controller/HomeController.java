@@ -1,13 +1,17 @@
 package controller;
 
 import java.awt.Desktop;
+import java.awt.Color;
 import java.net.URI;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
+import util.ThemeManager;
+import util.ThemeManager.Theme;
 import view.AlbumTabView;
 import view.ArtistAlbumTabView;
 import view.ArtistTabView;
@@ -15,6 +19,7 @@ import view.GenreTabView;
 import view.HomeView;
 import view.LoginView;
 import view.SongTabView;
+import view.ThemeSelectionDialog;
 
 public class HomeController {
 
@@ -32,6 +37,9 @@ public class HomeController {
 
         // Attach listeners to the view components
         initListeners();
+
+        // For changing between themes
+        initThemeObserver();
     }
 
     private void initTabs() {
@@ -78,8 +86,8 @@ public class HomeController {
 
     private void initListeners() {
 
+        view.addThemeToggleListener(e -> openThemeDialog());
         view.addExitListener(e -> System.exit(0));
-        view.addThemeToggleListener(e -> System.out.println("Changing theme..."));
         view.addOpenGitHubListener(e -> {
 
             ImageIcon githubIcon = new ImageIcon("assets/github.png");            
@@ -114,6 +122,47 @@ public class HomeController {
             });
         });
 
+    }
+
+    private void openThemeDialog() {
+        Theme currentTheme = ThemeManager.getInstance().getCurrentTheme();
+        ThemeSelectionDialog dialog = new ThemeSelectionDialog(view, currentTheme);
+
+        dialog.addApplyListener(e -> {
+            Theme selectedTheme = dialog.getSelectedTheme();
+            ThemeManager.getInstance().setTheme(selectedTheme);
+            dialog.dispose();
+        });
+
+        dialog.setVisible(true);
+    }
+
+    private void initThemeObserver() {
+        ThemeManager.getInstance().addPropertyChangeListener(evt -> {
+            Theme newTheme = (Theme) evt.getNewValue();
+            applyThemeColors(newTheme);
+            
+            // Forces Swing to recalculate and redraw colors across the window
+            SwingUtilities.updateComponentTreeUI(view);
+        });
+    }
+
+    private void applyThemeColors(Theme theme) {
+        
+        if (theme == Theme.DARK) {
+            System.out.println("TODARK");
+            UIManager.put("Panel.background", new Color(30, 30, 30));
+            UIManager.put("Label.foreground", new Color(240, 240, 240));
+            UIManager.put("TabbedPane.selected", new Color(50, 50, 50));
+            UIManager.put("TabbedPane.background", new Color(20, 20, 20));
+        } else {
+
+            System.out.println("TOLIGHT");
+            UIManager.put("Panel.background", new Color(248, 249, 250));
+            UIManager.put("Label.foreground", new Color(30, 30, 30));
+            UIManager.put("TabbedPane.selected", new Color(33, 37, 41));
+            UIManager.put("TabbedPane.background", new Color(52, 58, 64));
+        }
     }
 
     public static void openURL(String urlString) {

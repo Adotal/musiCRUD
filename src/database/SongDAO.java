@@ -57,7 +57,6 @@ public class SongDAO extends DatabaseConnection {
         try {
 
             PreparedStatement ps;
-            System.out.println("UPDATE");
             // TODA VALIDACIÓN VA AQUÍ
 
             ps = getConnection().prepareStatement("UPDATE song SET genre_id=?, album_id=?, title=?, lyrics=?, duration=?, release_date=? WHERE id=?");
