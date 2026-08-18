@@ -1,15 +1,17 @@
 package view;
 
 import util.ThemeManager.Theme;
-
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class ThemeSelectionDialog extends JDialog {
 
     private JRadioButton rbLight;
     private JRadioButton rbDark;
     private JButton btnApply;
+    private JButton btnCancel;
 
     public ThemeSelectionDialog(Frame owner, Theme currentTheme) {
         super(owner, "Seleccionar Tema", true);
@@ -17,13 +19,22 @@ public class ThemeSelectionDialog extends JDialog {
     }
 
     private void initUI(Theme currentTheme) {
-        setLayout(new BorderLayout(10, 10));
-        setSize(280, 150);
-        setLocationRelativeTo(getOwner());
+        // Configuración de la ventana
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setResizable(false);
+        
+        // Panel principal con márgenes limpios
+        JPanel mainPanel = new JPanel(new BorderLayout(15, 15));
+        mainPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
-        rbLight = new JRadioButton("Claro", currentTheme == Theme.LIGHT);
-        rbDark = new JRadioButton("Oscuro", currentTheme == Theme.DARK);
+        // Panel de selección de tema (Opciones alineadas a la izquierda)
+        JPanel radioPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        rbLight = new JRadioButton("Modo Claro", currentTheme == Theme.LIGHT);
+        rbDark = new JRadioButton("Modo Oscuro", currentTheme == Theme.DARK);
+
+        // Atajos de teclado (Mnemónicos)
+        rbLight.setMnemonic('C');
+        rbDark.setMnemonic('O');
 
         ButtonGroup group = new ButtonGroup();
         group.add(rbLight);
@@ -32,19 +43,36 @@ public class ThemeSelectionDialog extends JDialog {
         radioPanel.add(rbLight);
         radioPanel.add(rbDark);
 
+        // Panel de botones (Aplicar y Cancelar alineados a la derecha)
         btnApply = new JButton("Aplicar");
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        btnCancel = new JButton("Cancelar");
+        
+        // El botón Aplicar reacciona al presionar la tecla Enter
+        getRootPane().setDefaultButton(btnApply);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        buttonPanel.add(btnCancel);
         buttonPanel.add(btnApply);
 
-        add(radioPanel, BorderLayout.CENTER);
-        add(buttonPanel, BorderLayout.SOUTH);
+        // Comportamiento del botón Cancelar
+        btnCancel.addActionListener(e -> dispose());
+
+        // Ensamblado de componentes
+        mainPanel.add(radioPanel, BorderLayout.CENTER);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+        
+        setContentPane(mainPanel);
+
+        // Ajusta el tamaño automáticamente según el contenido y centra
+        pack();
+        setLocationRelativeTo(getOwner());
     }
 
     public Theme getSelectedTheme() {
         return rbDark.isSelected() ? Theme.DARK : Theme.LIGHT;
     }
 
-    public void addApplyListener(java.awt.event.ActionListener listener) {
+    public void addApplyListener(ActionListener listener) {
         btnApply.addActionListener(listener);
     }
 }
