@@ -1,10 +1,13 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.text.ParseException;
 
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.text.MaskFormatter;
 
 import model.Album;
 import model.Genre;
@@ -25,12 +28,24 @@ public class AlbumTabView extends JPanel {
 
         public void init() {
 
+                // Native Input Formatting
+                JFormattedTextField txtReleaseDate;
+
+                try {
+                        // Forces YYYY-MM-DD format (e.g., 2026-08-17)
+                        MaskFormatter dateMask = new MaskFormatter("####-##-##");
+                        dateMask.setPlaceholderCharacter('_');
+                        txtReleaseDate = new JFormattedTextField(dateMask);
+                } catch (ParseException e) {
+                        txtReleaseDate = new JFormattedTextField();
+                }
+
                 setLayout(new BorderLayout());
 
                 FormField[] fields = new FormField[] {
-                                new FormField(albumColumns[1], new JTextField()),                                
-                                new FormField(albumColumns[2], new JTextField()),                                                        
-                                new FormField(albumColumns[3], new JTextField()),
+                                new FormField(albumColumns[1], new JTextField()),
+                                new FormField(albumColumns[2], new JTextField()),
+                                new FormField(albumColumns[3], txtReleaseDate),
                                 new FormField(albumColumns[4], new JTextField()),
                 };
 

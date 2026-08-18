@@ -17,6 +17,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -216,11 +217,13 @@ public class CrudPanel extends JPanel {
 
     public void setFieldValue(String label, Object value) {
         JComponent comp = fieldsMap.get(label);
-        if (comp instanceof JTextField) {
+        if (comp instanceof JFormattedTextField) {
+            JFormattedTextField ftf = (JFormattedTextField) comp;
+            ftf.setValue(value != null ? value.toString() : null);
+        } else if (comp instanceof JTextField) {
             JTextField textField = (JTextField) comp;
             textField.setText(value != null ? value.toString() : "");
         } else if (comp instanceof JComboBox) {
-
             JComboBox comboBox = (JComboBox) comp;
             if (value == null)
                 return;
@@ -236,12 +239,13 @@ public class CrudPanel extends JPanel {
 
     public void clearFields() {
         fieldsMap.values().forEach(comp -> {
-            if (comp instanceof JTextField) {
-
+            if (comp instanceof JFormattedTextField) {
+                JFormattedTextField ftf = (JFormattedTextField) comp;
+                ftf.setValue(null); // Resets mask to placeholders
+            } else if (comp instanceof JTextField) {
                 JTextField textField = (JTextField) comp;
                 textField.setText("");
             } else if (comp instanceof JComboBox) {
-
                 JComboBox comboBox = (JComboBox) comp;
                 if (comboBox.getItemCount() > 0) {
                     comboBox.setSelectedIndex(0);
@@ -249,7 +253,6 @@ public class CrudPanel extends JPanel {
             }
         });
     }
-
     // Getters for Controller Usage
 
     public DefaultTableModel getTableModel() {

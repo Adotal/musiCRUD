@@ -2,11 +2,15 @@ package view;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DateFormatter;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Calendar;
+
 import util.AppColors;
 import util.Fonts;
 
@@ -72,8 +76,7 @@ public class LoginView extends JFrame {
 
         mainPanel.add(cardPanel);
 
-
-        ImageIcon image1 = new ImageIcon("./assets/man-headphones.jpg");
+        ImageIcon image1 = new ImageIcon("assets/music-and-art.jpg");
         JLabel imageLabel1 = new JLabel(image1);
         imageLabel1.setBorder(
             new EmptyBorder(35, 40, 35, 40));

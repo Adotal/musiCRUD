@@ -96,7 +96,7 @@ public class HomeController {
         view.addAuthorListener(e -> {
 
 
-            ImageIcon image1 = new ImageIcon("assets/music-and-art.jpg");      
+            ImageIcon image1 = new ImageIcon("assets/man-headphones.jpg");      
                         int resp = JOptionPane.showConfirmDialog(view, "Adro Yael Ornelas Ornelas", "Autor",
                     JOptionPane.YES_OPTION,
                     JOptionPane.INFORMATION_MESSAGE,
