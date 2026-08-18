@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import util.AppColors;
@@ -14,6 +15,7 @@ public class LoginView extends JFrame {
     private JTextField txtEmail;
     private JPasswordField txtPassword;
     private JButton btnSubmit;
+    private JCheckBox checkBoxShowPassword;
 
     public LoginView() {
         super();
@@ -26,7 +28,7 @@ public class LoginView extends JFrame {
 
         // Main background panel
         JPanel mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setBackground(AppColors.BACKGROUND_WHITE);
+        mainPanel.setBackground(AppColors.BACKGROUND_VIOLET);
 
         // Inner content card
         JPanel cardPanel = new JPanel();
@@ -35,7 +37,7 @@ public class LoginView extends JFrame {
         cardPanel.setBorder(new EmptyBorder(35, 40, 35, 40));
 
         // Title
-        JLabel title = new JLabel("Create Account");
+        JLabel title = new JLabel("Iniciar sesión");
         title.setFont(Fonts.TITLE_FONT);
         title.setForeground(AppColors.TEXT_DARK);
         title.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -44,18 +46,39 @@ public class LoginView extends JFrame {
         cardPanel.add(Box.createVerticalStrut(25));
 
         // Email Field Group
-        txtEmail = createInputField(cardPanel, "EMAIL ADDRESS", false);
+        txtEmail = createInputField(cardPanel, "USUARIO", false);
         cardPanel.add(Box.createVerticalStrut(20));
 
         // Name Field Group
-        txtPassword = (JPasswordField) createInputField(cardPanel, "PASSWORD", true);
-        cardPanel.add(Box.createVerticalStrut(23));
+        txtPassword = (JPasswordField) createInputField(cardPanel, "CONTRASEÑA", true);
+
+        txtPassword.setEchoChar('.');
+        cardPanel.add(Box.createVerticalStrut(10));
+
+        checkBoxShowPassword = new JCheckBox("Ver contraseña");
+        checkBoxShowPassword.setFont(Fonts.TEXT_FONT);
+        checkBoxShowPassword.setForeground(AppColors.TEXT_DARK);
+        checkBoxShowPassword.setBackground(AppColors.BACKGROUND_WHITE);
+        checkBoxShowPassword.setFocusPainted(false);
+        checkBoxShowPassword.setBorderPainted(false);
+        checkBoxShowPassword.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        cardPanel.add(checkBoxShowPassword);
+
+        cardPanel.add(Box.createVerticalStrut(28));
 
         // Primary Button
         btnSubmit = createPrimaryButton("Get Started");
         cardPanel.add(btnSubmit);
 
         mainPanel.add(cardPanel);
+
+
+        ImageIcon image1 = new ImageIcon("./assets/man-headphones.jpg");
+        JLabel imageLabel1 = new JLabel(image1);
+        imageLabel1.setBorder(
+            new EmptyBorder(35, 40, 35, 40));
+        mainPanel.add(imageLabel1);
+
         add(mainPanel);
     }
 
@@ -124,6 +147,10 @@ public class LoginView extends JFrame {
     // Setter of button event
     public void addSubmitListener(ActionListener actionListener) {
         btnSubmit.addActionListener(actionListener);
+    }
+
+    public void addCheckBoxShowPasswordListener(ItemListener itemListener) {
+        checkBoxShowPassword.addItemListener(itemListener);
     }
 
 }

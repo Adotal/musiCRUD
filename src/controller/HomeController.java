@@ -3,14 +3,17 @@ package controller;
 import java.awt.Desktop;
 import java.net.URI;
 
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 
 import view.AlbumTabView;
 import view.ArtistAlbumTabView;
 import view.ArtistTabView;
 import view.GenreTabView;
 import view.HomeView;
+import view.LoginView;
 import view.SongTabView;
 
 public class HomeController {
@@ -79,14 +82,36 @@ public class HomeController {
         view.addThemeToggleListener(e -> System.out.println("Changing theme..."));
         view.addOpenGitHubListener(e -> {
 
-            int resp = JOptionPane.showConfirmDialog(view, "Redirigir al GitHub Fuente del proyecto");
+            ImageIcon githubIcon = new ImageIcon("assets/github.png");            
+
+            int resp = JOptionPane.showConfirmDialog(view, "Redirigir al GitHub Fuente del proyecto", "GitHub",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    githubIcon);
 
             if (0 == resp) {
                 openURL("https://github.com/Adotal/musiCRUD");
             }
         });
         view.addAuthorListener(e -> {
-            JOptionPane.showMessageDialog(view, "Adro Yael Ornelas Ornelas");
+
+
+            ImageIcon image1 = new ImageIcon("assets/music-and-art.jpg");      
+                        int resp = JOptionPane.showConfirmDialog(view, "Adro Yael Ornelas Ornelas", "Autor",
+                    JOptionPane.YES_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    image1
+                    );
+        });
+        view.addLogoutListener(e -> {
+            view.dispose();
+            SwingUtilities.invokeLater(() -> {
+
+                LoginView loginView = new LoginView();
+                LoginController loginController = new LoginController(loginView);
+                loginView
+                        .setVisible(true);
+            });
         });
 
     }

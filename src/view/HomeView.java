@@ -2,6 +2,10 @@ package view;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
+import util.AppColors;
+import util.Fonts;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -10,7 +14,7 @@ public class HomeView extends JFrame {
 
     private JMenuBar jMenuBar;
     private JMenu jMenuOptions, jMenuAbout;
-    private JMenuItem jMenuItemExit, jMenuItemAuthor, jMenuItemGithub, jMenuItemToggleTheme;
+    private JMenuItem jMenuItemExit, jMenuItemAuthor, jMenuItemGithub, jMenuItemToggleTheme, jMenuItemLogOut;
     // Tabs (one for each table)
     private JTabbedPane tabbedPane;
 
@@ -20,6 +24,20 @@ public class HomeView extends JFrame {
     }
 
     public void init() {
+
+        // Stylize TabbedPane
+        UIManager.put("TabbedPane.focus", new Color(0, 0, 0, 0));
+        UIManager.put("TabbedPane.selectedTabPadAreaHeight", 0);
+        // Cambia el color de la pestaña seleccionada (ponemos el gris oscuro)
+        UIManager.put("TabbedPane.selected", new Color(33, 37, 41));
+        // Cambia el color del fondo de la barra de pestañas
+        UIManager.put("TabbedPane.background", new Color(52, 58, 64));
+        // Cambia el color del borde feo que rodea al contenido
+        UIManager.put("TabbedPane.contentAreaColor", new Color(33, 37, 41));
+
+        // Aplicar a los elementos de la lista (JMenuItem)
+        UIManager.put("MenuItem.selectionBackground", AppColors.BACKGROUND_WHITE);
+        UIManager.put("MenuItem.selectionForeground", AppColors.TEXT_DARK);
 
         setLayout(new BorderLayout());
         setTitle("MusiCRUD");
@@ -35,9 +53,11 @@ public class HomeView extends JFrame {
         jMenuItemExit = new JMenuItem("Salir");
         jMenuItemAuthor = new JMenuItem("Autor");
         jMenuItemGithub = new JMenuItem("GitHub");
+        jMenuItemLogOut = new JMenuItem("Cerrar sesión");
 
         jMenuOptions.add(jMenuItemToggleTheme);
         jMenuOptions.add(jMenuItemExit);
+        jMenuOptions.add(jMenuItemLogOut);
         jMenuAbout.add(jMenuItemAuthor);
         jMenuAbout.add(jMenuItemGithub);
 
@@ -46,8 +66,37 @@ public class HomeView extends JFrame {
 
         setJMenuBar(jMenuBar);
 
+        // Topbar style
+        jMenuBar.setBackground(AppColors.BACKGROUND_VIOLET);
+        jMenuBar.setBorder(BorderFactory.createLineBorder(new Color(52, 58, 64), 1));
+
+        // Crear un arreglo para estilizar todos los menús y elementos rápido
+        Object[] componentesMenu = {
+                jMenuOptions, jMenuAbout,
+                jMenuItemToggleTheme, jMenuItemExit, jMenuItemAuthor, jMenuItemGithub, jMenuItemLogOut
+        };
+
+        for (Object comp : componentesMenu) {
+            if (comp instanceof JMenu) {
+                JMenu m = (JMenu) comp;
+                m.setForeground(AppColors.TEXT_WHITE);
+                m.setFont(Fonts.HEADER_FONT);
+            } else if (comp instanceof JMenuItem) {
+                JMenuItem mi = (JMenuItem) comp;
+                mi.setBackground(AppColors.BACKGROUND_VIOLET);
+                mi.setForeground(AppColors.TEXT_WHITE);
+                mi.setFont(Fonts.TEXT_FONT);
+                mi.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12)); // Espaciado interno
+            }
+        }
+
         // Create the Tabbed Pane
         tabbedPane = new JTabbedPane();
+        tabbedPane.setFont(Fonts.HEADER_FONT);
+        tabbedPane.setBackground(AppColors.BACKGROUND_VIOLET);
+        tabbedPane.setForeground(AppColors.TEXT_WHITE);
+
+        tabbedPane.setBorder(BorderFactory.createLineBorder(AppColors.BLACK, 1));
         // Add the tabbed pane to the center of the main window
         add(tabbedPane, BorderLayout.CENTER);
 
@@ -63,6 +112,9 @@ public class HomeView extends JFrame {
 
         KeyStroke keyStrokeALTT = KeyStroke.getKeyStroke(KeyEvent.VK_T, KeyEvent.ALT_DOWN_MASK);
         jMenuItemToggleTheme.setAccelerator(keyStrokeALTT);
+
+        KeyStroke keyStrokeCTRO = KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK);
+        jMenuItemLogOut.setAccelerator(keyStrokeCTRO);
     }
 
     // Setters to add events
@@ -81,6 +133,10 @@ public class HomeView extends JFrame {
 
     public void addThemeToggleListener(ActionListener actionListener) {
         jMenuItemToggleTheme.addActionListener(actionListener);
+    }
+
+    public void addLogoutListener(ActionListener actionListener) {
+        jMenuItemLogOut.addActionListener(actionListener);
     }
 
     // Getter to controller

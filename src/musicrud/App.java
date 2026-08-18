@@ -17,18 +17,18 @@ public class App {
 
         SwingUtilities.invokeLater(() -> {
 
-            // LoginView loginView = new LoginView();
-            // LoginController loginController = new LoginController(loginView);
-            // loginView
-            // .setVisible(true);
+            LoginView loginView = new LoginView();
+            LoginController loginController = new LoginController(loginView);
+            loginView
+            .setVisible(true);
 
-            SwingUtilities.invokeLater(() -> {
+            // SwingUtilities.invokeLater(() -> {
 
-                HomeView homeView = new HomeView();
-                new HomeController(homeView);
-                homeView.setVisible(true);
+            //     HomeView homeView = new HomeView();
+            //     new HomeController(homeView);
+            //     homeView.setVisible(true);
 
-            });
+            // });
         });
 
     }
