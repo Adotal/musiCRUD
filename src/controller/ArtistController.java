@@ -147,26 +147,39 @@ public class ArtistController {
 
     private void onUpdate() {
 
+        String artisiticName = view.getCrudPanel().getTextFieldValue("Nombre artístico");
+        String name = view.getCrudPanel().getTextFieldValue("Nombre");
+        String lastnames = view.getCrudPanel().getTextFieldValue("Apellidos");
+        String countryOfOrigin = view.getCrudPanel().getTextFieldValue("País de origen");
+
+        // If empty field
+        if (artisiticName.isBlank() || name.isBlank() || lastnames.isBlank() ||
+                countryOfOrigin.isEmpty()) {
+            JOptionPane.showMessageDialog(view,
+                    "No es posible actualizar con valores vacíos",
+                    "Campos Incompletos",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         int resp = JOptionPane.showConfirmDialog(view, "¿Seguro de actualizar el registro?", "Confirmar actualización",
                 JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
-        // If selected Yes in JOptionPane
-        if (0 == resp) {
-            String artisiticName = view.getCrudPanel().getTextFieldValue("Nombre artístico");
-            String name = view.getCrudPanel().getTextFieldValue("Nombre");
-            String lastnames = view.getCrudPanel().getTextFieldValue("Apellidos");
-            String countryOfOrigin = view.getCrudPanel().getTextFieldValue("País de origen");
-
-            int selectedRow = view.getCrudPanel().getTable().getSelectedRow();
-            int id = Integer.parseInt(view.getCrudPanel().getTable().getValueAt(selectedRow, 0).toString());
-
-            Artist album = new Artist(id, artisiticName, name, lastnames, countryOfOrigin);
-            albumDAO.update(album);
-
-            // Fetch and populate table again
-            loadTableData();
-            view.getCrudPanel().clearFields();
+        // If not selected Yes in JOptionPane, finish
+        if (resp != JOptionPane.YES_OPTION) {
+            return;
         }
+
+        int selectedRow = view.getCrudPanel().getTable().getSelectedRow();
+        int id = Integer.parseInt(view.getCrudPanel().getTable().getValueAt(selectedRow, 0).toString());
+
+        Artist album = new Artist(id, artisiticName, name, lastnames, countryOfOrigin);
+        albumDAO.update(album);
+
+        // Fetch and populate table again
+        loadTableData();
+        view.getCrudPanel().clearFields();
+
     }
 
     private void onDelete() {

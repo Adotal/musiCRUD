@@ -94,20 +94,19 @@ public class AlbumController {
     private void onCreate() {
 
         String discoString = view.getCrudPanel().getTextFieldValue("ID discografía");
-        
         String title = view.getCrudPanel().getTextFieldValue("Título");
         String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento YYYY-MM-DD");
         String imageUrl = view.getCrudPanel().getTextFieldValue("Imagen URL");
 
         // If empty field
-        if (discoString.isBlank() || title.isBlank() ||  releaseDate.isBlank() || imageUrl.isBlank()) {
+        if (discoString.isBlank() || title.isBlank() || releaseDate.isBlank() || imageUrl.isBlank()) {
             JOptionPane.showMessageDialog(view,
                     "Por favor, complete los campos obligatorios.",
                     "Campos Incompletos",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         // If not null, safe to parse
         int discographyId = Integer.parseInt(discoString);
 
@@ -121,23 +120,23 @@ public class AlbumController {
         }
 
         // Try to insert in DB
-        try{
+        try {
 
-        Album album = new Album(0, discographyId, title, releaseDate, imageUrl);
-        albumDAO.insert(album);
+            Album album = new Album(0, discographyId, title, releaseDate, imageUrl);
+            albumDAO.insert(album);
 
-        // Fetch and populate table again
-        loadTableData();
-        view.getCrudPanel().clearFields();
+            // Fetch and populate table again
+            loadTableData();
+            view.getCrudPanel().clearFields();
 
-        // Select last item (the just created)
-        int lastRow = view.getCrudPanel().getTable()
-                .convertRowIndexToView(view.getCrudPanel().getTableModel().getRowCount()
-                        - 1);
-        view.getCrudPanel().getTable().setRowSelectionInterval(lastRow, lastRow);
+            // Select last item (the just created)
+            int lastRow = view.getCrudPanel().getTable()
+                    .convertRowIndexToView(view.getCrudPanel().getTableModel().getRowCount()
+                            - 1);
+            view.getCrudPanel().getTable().setRowSelectionInterval(lastRow, lastRow);
 
-        // Success message
-             JOptionPane.showMessageDialog(view, "Registro guardado exitosamente.", "Éxito",
+            // Success message
+            JOptionPane.showMessageDialog(view, "Registro guardado exitosamente.", "Éxito",
                     JOptionPane.INFORMATION_MESSAGE);
 
         } catch (SQLException ex) {
@@ -152,26 +151,39 @@ public class AlbumController {
 
     private void onUpdate() {
 
+        String discoString = view.getCrudPanel().getTextFieldValue("ID discografía");
+        String title = view.getCrudPanel().getTextFieldValue("Título");
+        String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento YYYY-MM-DD");
+        String imageUrl = view.getCrudPanel().getTextFieldValue("Imagen URL");
+
+        // If empty field
+        if (discoString.isBlank() || title.isBlank() || releaseDate.isBlank() || imageUrl.isBlank()) {
+            JOptionPane.showMessageDialog(view,
+                    "No es posible ctualizar con valores vacíos",
+                    "Campos Incompletos",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         int resp = JOptionPane.showConfirmDialog(view, "¿Seguro de actualizar el registro?", "Confirmar actualización",
                 JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
-        // If selected Yes in JOptionPane
-        if (0 == resp) {
-
-            int discographyId = Integer.parseInt(view.getCrudPanel().getTextFieldValue("ID discografía"));
-            String title = view.getCrudPanel().getTextFieldValue("Título");
-            String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento YYYY-MM-DD");
-            String imageUrl = view.getCrudPanel().getTextFieldValue("Imagen URL");
-
-            int selectedRow = view.getCrudPanel().getTable().getSelectedRow();
-            int id = Integer.parseInt(view.getCrudPanel().getTable().getValueAt(selectedRow, 0).toString());
-            Album album = new Album(id, discographyId, title, releaseDate, imageUrl);
-            albumDAO.update(album);
-
-            // Fetch and populate table again
-            loadTableData();
-            view.getCrudPanel().clearFields();
+        // If not selected Yes in JOptionPane, finish
+        if (resp != JOptionPane.YES_OPTION) {
+            return;
         }
+
+        int discographyId = Integer.parseInt(discoString);
+
+        int selectedRow = view.getCrudPanel().getTable().getSelectedRow();
+        int id = Integer.parseInt(view.getCrudPanel().getTable().getValueAt(selectedRow, 0).toString());
+        Album album = new Album(id, discographyId, title, releaseDate, imageUrl);
+        albumDAO.update(album);
+
+        // Fetch and populate table again
+        loadTableData();
+        view.getCrudPanel().clearFields();
+
     }
 
     private void onDelete() {

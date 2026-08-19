@@ -2,14 +2,9 @@ package controller;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import database.AlbumDAO;
@@ -187,30 +182,41 @@ public class SongController {
 
     private void onUpdate() {
 
+        // Retrieve all current data values
+        Genre selectedGenre = view.getCrudPanel().getSelectedComboObject("Género");
+        Album selectedAlbum = view.getCrudPanel().getSelectedComboObject("Álbum");
+        String title = view.getCrudPanel().getTextFieldValue("Título");
+        String lyrics = view.getCrudPanel().getTextFieldValue("Letras URL");
+        String duration = view.getCrudPanel().getTextFieldValue("Duración");
+        String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento YYYY-MM-DD");
+
+        // If empty field
+        if (selectedGenre == null || selectedAlbum == null || title.isBlank() || lyrics.isBlank() ||
+                duration.isEmpty() || releaseDate.isBlank()) {
+            JOptionPane.showMessageDialog(view,
+                    "No es posible actualizar con campos vacío",
+                    "Campos Incompletos",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         int resp = JOptionPane.showConfirmDialog(view, "¿Seguro de actualizar el registro?", "Confirmar actualización",
                 JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
-        // If selected Yes in JOptionPane
-        if (0 == resp) {
-
-            // Extract selected FK objects directly from CrudPanel
-            Genre selectedGenre = view.getCrudPanel().getSelectedComboObject("Género");
-            Album selectedAlbum = view.getCrudPanel().getSelectedComboObject("Álbum");
-
-            String title = view.getCrudPanel().getTextFieldValue("Título");
-            String lyrics = view.getCrudPanel().getTextFieldValue("Letras URL");
-            String duration = view.getCrudPanel().getTextFieldValue("Duración");
-            String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento YYYY-MM-DD");
-
-            int selectedRow = view.getCrudPanel().getTable().getSelectedRow();
-            int id = Integer.parseInt(view.getCrudPanel().getTable().getValueAt(selectedRow, 0).toString());
-            Song song = new Song(id, selectedGenre, selectedAlbum, title, lyrics, duration, releaseDate);
-            songDAO.update(song);
-
-            // Fetch and populate table again
-            loadTableData();
-            view.getCrudPanel().clearFields();
+        // If not selected Yes in JOptionPane, finish
+        if (resp != JOptionPane.YES_OPTION) {
+            return;
         }
+
+        int selectedRow = view.getCrudPanel().getTable().getSelectedRow();
+        int id = Integer.parseInt(view.getCrudPanel().getTable().getValueAt(selectedRow, 0).toString());
+        Song song = new Song(id, selectedGenre, selectedAlbum, title, lyrics, duration, releaseDate);
+        songDAO.update(song);
+
+        // Fetch and populate table again
+        loadTableData();
+        view.getCrudPanel().clearFields();
+
     }
 
     private void onDelete() {
