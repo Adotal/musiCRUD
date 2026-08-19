@@ -1,5 +1,6 @@
 package controller;
 
+import java.sql.SQLException;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -92,16 +93,30 @@ public class ArtistController {
 
     private void onCreate() {
 
+        String artisiticName = view.getCrudPanel().getTextFieldValue("Nombre artístico");
+        String name = view.getCrudPanel().getTextFieldValue("Nombre");
+        String lastnames = view.getCrudPanel().getTextFieldValue("Apellidos");
+        String countryOfOrigin = view.getCrudPanel().getTextFieldValue("País de origen");
+
+        // If empty field
+        if (artisiticName.isBlank() || name.isBlank() || lastnames.isBlank() ||
+                countryOfOrigin.isEmpty()) {
+            JOptionPane.showMessageDialog(view,
+                    "Por favor, complete los campos obligatorios.",
+                    "Campos Incompletos",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         int resp = JOptionPane.showConfirmDialog(view, "¿Seguro de agregar el registro?", "Confirmar creación",
                 JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
-        // If selected Yes in JOptionPane
-        if (0 == resp) {
+        // If not selected Yes in JOptionPane, finish
+        if (resp != JOptionPane.YES_OPTION) {
+            return;
+        }
 
-            String artisiticName = view.getCrudPanel().getTextFieldValue("Nombre artístico");
-            String name = view.getCrudPanel().getTextFieldValue("Nombre");
-            String lastnames = view.getCrudPanel().getTextFieldValue("Apellidos");
-            String countryOfOrigin = view.getCrudPanel().getTextFieldValue("País de origen");
+        try {
 
             Artist album = new Artist(0, artisiticName, name, lastnames, countryOfOrigin);
             albumDAO.insert(album);
@@ -115,7 +130,19 @@ public class ArtistController {
                     .convertRowIndexToView(view.getCrudPanel().getTableModel().getRowCount()
                             - 1);
             view.getCrudPanel().getTable().setRowSelectionInterval(lastRow, lastRow);
+
+            // Success message
+            JOptionPane.showMessageDialog(view, "Registro guardado exitosamente.", "Éxito",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (SQLException ex) {
+            // Inform user on database failure
+            JOptionPane.showMessageDialog(view,
+                    "Error al guardar el registro en la base de datos:\n" + ex.getMessage(),
+                    "Error de Base de Datos",
+                    JOptionPane.ERROR_MESSAGE);
         }
+
     }
 
     private void onUpdate() {

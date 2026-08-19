@@ -13,12 +13,10 @@ public class AlbumDAO extends DatabaseConnection {
         super();
     }
 
-    public void insert(Album a) {
-
-        try {
+    public void insert(Album a) throws SQLException {
 
             PreparedStatement ps;
-            // TODA VALIDACIÓN VA AQUÍ
+            
             ps = getConnection().prepareStatement(
                     "INSERT INTO album(discography_id, title, release_date, image_url) values(?,?,?,?)");
             ps.setInt(1, a.getDiscography());
@@ -26,9 +24,6 @@ public class AlbumDAO extends DatabaseConnection {
             ps.setString(3, a.getReleaseDate());
             ps.setString(4, a.getImageUrl());
             ps.executeUpdate();
-        } catch (SQLException ex) {
-            System.getLogger(AlbumDAO.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-        }
 
     }
 

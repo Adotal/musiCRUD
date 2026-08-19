@@ -16,7 +16,7 @@ import util.ui.FormField;
 public class SongTabView extends JPanel {
 
         private final String[] songColumns = {
-                        "ID", "Género", "Álbum", "Título", "Letras URL", "Duración", "Fecha de lanzamiento"
+                        "ID", "Género", "Álbum", "Título", "Letras URL", "Duración", "Fecha de lanzamiento YYYY-MM-DD"
         };
 
         private JComboBox<Genre> cbGenre = new JComboBox<>();
@@ -58,7 +58,7 @@ public class SongTabView extends JPanel {
                                 new FormField("Título", new JTextField()),
                                 new FormField("Letras URL", new JTextField()),
                                 new FormField("Duración", txtDuration),
-                                new FormField("Fecha de lanzamiento", txtReleaseDate)
+                                new FormField("Fecha de lanzamiento YYYY-MM-DD", txtReleaseDate)
                 };
 
                 crudPanel = new CrudPanel("Canciones", songColumns, fields);

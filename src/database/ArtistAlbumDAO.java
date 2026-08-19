@@ -17,9 +17,7 @@ public class ArtistAlbumDAO extends DatabaseConnection {
         super();
     }
 
-    public void insert(ArtistAlbum a) {
-
-        try {
+    public void insert(ArtistAlbum a) throws SQLException {
 
             PreparedStatement ps;
             // TODA VALIDACIÓN VA AQUÍ
@@ -28,10 +26,7 @@ public class ArtistAlbumDAO extends DatabaseConnection {
             ps.setInt(1, a.getArtist().getId());
             ps.setInt(2, a.getAlbum().getId());
 
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            System.getLogger(ArtistDAO.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-        }
+            ps.executeUpdate();        
 
     }
 

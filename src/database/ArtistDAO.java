@@ -13,9 +13,7 @@ public class ArtistDAO extends DatabaseConnection {
         super();
     }
 
-    public void insert(Artist a) {
-
-        try {
+    public void insert(Artist a) throws SQLException {
 
             PreparedStatement ps;
             // TODA VALIDACIÓN VA AQUÍ
@@ -25,11 +23,7 @@ public class ArtistDAO extends DatabaseConnection {
             ps.setString(2, a.getName());
             ps.setString(3, a.getLastnames());
             ps.setString(4, a.getCountryOfOrigin());
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            System.getLogger(ArtistDAO.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-        }
-
+            ps.executeUpdate();        
     }
 
     public void deleteById(int id) {

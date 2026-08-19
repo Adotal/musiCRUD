@@ -13,18 +13,13 @@ public class GenreDAO extends DatabaseConnection {
         super();
     }
 
-    public void insert(Genre g) {
+    public void insert(Genre g) throws SQLException {
 
-        try {
-
-            PreparedStatement ps;
-            // TODA VALIDACIÓN VA AQUÍ
-            ps = getConnection().prepareStatement("INSERT INTO genre(name) values(?)");
-            ps.setString(1, g.getName());
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            System.getLogger(GenreDAO.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-        }
+        PreparedStatement ps;
+        // TODA VALIDACIÓN VA AQUÍ
+        ps = getConnection().prepareStatement("INSERT INTO genre(name) values(?)");
+        ps.setString(1, g.getName());
+        ps.executeUpdate();
 
     }
 
@@ -96,7 +91,7 @@ public class GenreDAO extends DatabaseConnection {
             if (rs.next()) {
                 genre = new Genre(id, rs.getString("name"));
             }
-        } catch (SQLException ex) {        
+        } catch (SQLException ex) {
             System.getLogger(GenreDAO.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
             return null;
         }

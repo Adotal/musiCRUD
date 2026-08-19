@@ -1,5 +1,6 @@
 package controller;
 
+import java.sql.SQLException;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -89,13 +90,26 @@ public class GenreController {
 
     private void onCreate() {
 
+        String name = view.getCrudPanel().getTextFieldValue("Nombre");
+
+        // If empty field
+        if (name.isBlank()) {
+            JOptionPane.showMessageDialog(view,
+                    "Por favor, complete los campos obligatorios.",
+                    "Campos Incompletos",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         int resp = JOptionPane.showConfirmDialog(view, "¿Seguro de agregar el registro?", "Confirmar creación",
                 JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
-        // If selected Yes in JOptionPane
-        if (0 == resp) {
+        // If not selected Yes in JOptionPane, finish
+        if (resp != JOptionPane.YES_OPTION) {
+            return;
+        }
 
-            String name = view.getCrudPanel().getTextFieldValue("Nombre");
+        try {
 
             Genre album = new Genre(0, name);
             albumDAO.insert(album);
@@ -109,7 +123,19 @@ public class GenreController {
                     .convertRowIndexToView(view.getCrudPanel().getTableModel().getRowCount()
                             - 1);
             view.getCrudPanel().getTable().setRowSelectionInterval(lastRow, lastRow);
+
+            // Success message
+            JOptionPane.showMessageDialog(view, "Registro guardado exitosamente.", "Éxito",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (SQLException ex) {
+            // Inform user on database failure
+            JOptionPane.showMessageDialog(view,
+                    "Error al guardar el registro en la base de datos:\n" + ex.getMessage(),
+                    "Error de Base de Datos",
+                    JOptionPane.ERROR_MESSAGE);
         }
+
     }
 
     private void onUpdate() {
@@ -119,7 +145,7 @@ public class GenreController {
 
         // If selected Yes in JOptionPane
         if (0 == resp) {
-            
+
             String name = view.getCrudPanel().getTextFieldValue("Nombre");
 
             int selectedRow = view.getCrudPanel().getTable().getSelectedRow();

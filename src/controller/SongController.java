@@ -1,5 +1,6 @@
 package controller;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -125,33 +126,63 @@ public class SongController {
 
     private void onCreate() {
 
+        // Retrieve all current data values
+        Genre selectedGenre = view.getCrudPanel().getSelectedComboObject("Género");
+        Album selectedAlbum = view.getCrudPanel().getSelectedComboObject("Álbum");
+        String title = view.getCrudPanel().getTextFieldValue("Título");
+        String lyrics = view.getCrudPanel().getTextFieldValue("Letras URL");
+        String duration = view.getCrudPanel().getTextFieldValue("Duración");
+        String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento YYYY-MM-DD");
+
+        // If empty field
+        if (selectedGenre == null || selectedAlbum == null || title.isBlank() || lyrics.isBlank() ||
+                duration.isEmpty() || releaseDate.isBlank()) {
+            JOptionPane.showMessageDialog(view,
+                    "Por favor, complete los campos obligatorios.",
+                    "Campos Incompletos",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         int resp = JOptionPane.showConfirmDialog(view, "¿Seguro de agregar el registro?", "Confirmar creación",
-                JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-        // If selected Yes in JOptionPane
-        if (0 == resp) {
-            // Extract selected FK objects directly from CrudPanel
-            Genre selectedGenre = view.getCrudPanel().getSelectedComboObject("Género");
-            Album selectedAlbum = view.getCrudPanel().getSelectedComboObject("Álbum");
+        // If not selected Yes in JOptionPane, finish
+        if (resp != JOptionPane.YES_OPTION) {
+            return;
+        }
 
-            String title = view.getCrudPanel().getTextFieldValue("Título");
-            String lyrics = view.getCrudPanel().getTextFieldValue("Letras URL");
-            String duration = view.getCrudPanel().getTextFieldValue("Duración");
-            String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento");
+        // Try to insert in DB
+        try {
 
             Song song = new Song(0, selectedGenre, selectedAlbum, title, lyrics, duration, releaseDate);
+
+            // Execute database query
             songDAO.insert(song);
 
-            // Fetch and populate table again
+            // If succes on insert, reload data to get new register
             loadTableData();
             view.getCrudPanel().clearFields();
 
             // Select last item (the just created)
-            int lastRow = view.getCrudPanel().getTable()
-                    .convertRowIndexToView(view.getCrudPanel().getTableModel().getRowCount()
-                            - 1);
-            view.getCrudPanel().getTable().setRowSelectionInterval(lastRow, lastRow);
+            int lastRowIndex = view.getCrudPanel().getTableModel().getRowCount() - 1;
+            if (lastRowIndex >= 0) {
+                int lastRow = view.getCrudPanel().getTable().convertRowIndexToView(lastRowIndex);
+                view.getCrudPanel().getTable().setRowSelectionInterval(lastRow, lastRow);
+            }
+
+            // Success message
+            JOptionPane.showMessageDialog(view, "Registro guardado exitosamente.", "Éxito",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (SQLException ex) {
+            // Inform user on database failure
+            JOptionPane.showMessageDialog(view,
+                    "Error al guardar el registro en la base de datos:\n" + ex.getMessage(),
+                    "Error de Base de Datos",
+                    JOptionPane.ERROR_MESSAGE);
         }
+
     }
 
     private void onUpdate() {
@@ -169,7 +200,7 @@ public class SongController {
             String title = view.getCrudPanel().getTextFieldValue("Título");
             String lyrics = view.getCrudPanel().getTextFieldValue("Letras URL");
             String duration = view.getCrudPanel().getTextFieldValue("Duración");
-            String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento");
+            String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento YYYY-MM-DD");
 
             int selectedRow = view.getCrudPanel().getTable().getSelectedRow();
             int id = Integer.parseInt(view.getCrudPanel().getTable().getValueAt(selectedRow, 0).toString());

@@ -16,7 +16,7 @@ import util.ui.FormField;
 public class AlbumTabView extends JPanel {
 
         private final String[] albumColumns = {
-                        "ID", "ID discografía", "Título", "Fecha de lanzamiento", "Imagen URL"
+                        "ID", "ID discografía", "Título", "Fecha de lanzamiento YYYY-MM-DD", "Imagen URL"
         };
 
         private CrudPanel crudPanel;

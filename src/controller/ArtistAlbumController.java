@@ -1,5 +1,6 @@
 package controller;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -91,11 +92,11 @@ public class ArtistAlbumController {
             int id = Integer.parseInt(view.getCrudPanel().getTable().getValueAt(modelRow, 0).toString());
 
             // Fetch albums related to artist
-            List<Album> albumsRelated = artistAlbumDAO.getAlbumsByArtist(id);   
-            
+            List<Album> albumsRelated = artistAlbumDAO.getAlbumsByArtist(id);
+
             // Clear old albums
             view.getAlbumsListModel().clear();
-            albumsRelated.forEach(view.getAlbumsListModel()::addElement);                 
+            albumsRelated.forEach(view.getAlbumsListModel()::addElement);
 
             // Iterate over fields
             view.getCrudPanel().getFieldsMap().forEach((fieldName, textField) -> {
@@ -134,14 +135,28 @@ public class ArtistAlbumController {
 
     private void onCreate() {
 
+        // Extract selected FK objects directly from CrudPanel
+        Artist selectedArtist = view.getCrudPanel().getSelectedComboObject("Artista");
+        Album selectedAlbum = view.getCrudPanel().getSelectedComboObject("Álbum");
+
+        // If empty field
+        if (selectedArtist == null || selectedAlbum == null) {
+            JOptionPane.showMessageDialog(view,
+                    "Por favor, complete los campos obligatorios.",
+                    "Campos Incompletos",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         int resp = JOptionPane.showConfirmDialog(view, "¿Seguro de agregar el registro?", "Confirmar creación",
                 JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
-        // If selected Yes in JOptionPane
-        if (0 == resp) {
-            // Extract selected FK objects directly from CrudPanel
-            Artist selectedArtist = view.getCrudPanel().getSelectedComboObject("Artista");
-            Album selectedAlbum = view.getCrudPanel().getSelectedComboObject("Álbum");
+        // If not selected Yes in JOptionPane, finish
+        if (resp != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        try {
 
             ArtistAlbum artistAlbum = new ArtistAlbum(selectedArtist, selectedAlbum);
             artistAlbumDAO.insert(artistAlbum);
@@ -149,6 +164,16 @@ public class ArtistAlbumController {
             // Fetch and populate table again
             loadTableData();
             view.getCrudPanel().clearFields();
+            // Success message
+            JOptionPane.showMessageDialog(view, "Registro guardado exitosamente.", "Éxito",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (SQLException ex) {
+            // Inform user on database failure
+            JOptionPane.showMessageDialog(view,
+                    "Error al guardar el registro en la base de datos:\n" + ex.getMessage(),
+                    "Error de Base de Datos",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 

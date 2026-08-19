@@ -15,26 +15,17 @@ public class SongDAO extends DatabaseConnection {
         super();
     }
 
-    public void insert(Song a) {
-
-        try {
-            
-            PreparedStatement ps;
-            
-            // TODA VALIDACIÓN VA AQUÍ
-
-            ps = getConnection().prepareStatement(
-                    "INSERT INTO song(genre_id, album_id, title, lyrics, duration, release_date) values(?,?,?,?,?,?)");
-            ps.setInt(1, a.getGenre().getId());
-            ps.setInt(2, a.getAlbum().getId());
-            ps.setString(3, a.getTitle());
-            ps.setString(4, a.getLyrics());
-            ps.setString(5, a.getDuration());
-            ps.setString(6, a.getReleaseDate());
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            System.getLogger(SongDAO.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-        }
+    public void insert(Song a) throws SQLException {
+        PreparedStatement ps;
+        ps = getConnection().prepareStatement(
+                "INSERT INTO song(genre_id, album_id, title, lyrics, duration, release_date) values(?,?,?,?,?,?)");
+        ps.setInt(1, a.getGenre().getId());
+        ps.setInt(2, a.getAlbum().getId());
+        ps.setString(3, a.getTitle());
+        ps.setString(4, a.getLyrics());
+        ps.setString(5, a.getDuration());
+        ps.setString(6, a.getReleaseDate());
+        ps.executeUpdate();
 
     }
 
@@ -59,7 +50,8 @@ public class SongDAO extends DatabaseConnection {
             PreparedStatement ps;
             // TODA VALIDACIÓN VA AQUÍ
 
-            ps = getConnection().prepareStatement("UPDATE song SET genre_id=?, album_id=?, title=?, lyrics=?, duration=?, release_date=? WHERE id=?");
+            ps = getConnection().prepareStatement(
+                    "UPDATE song SET genre_id=?, album_id=?, title=?, lyrics=?, duration=?, release_date=? WHERE id=?");
             ps.setInt(1, a.getGenre().getId());
             ps.setInt(2, a.getAlbum().getId());
             ps.setString(3, a.getTitle());

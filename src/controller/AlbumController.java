@@ -1,5 +1,6 @@
 package controller;
 
+import java.sql.SQLException;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -92,30 +93,61 @@ public class AlbumController {
 
     private void onCreate() {
 
+        String discoString = view.getCrudPanel().getTextFieldValue("ID discografía");
+        
+        String title = view.getCrudPanel().getTextFieldValue("Título");
+        String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento YYYY-MM-DD");
+        String imageUrl = view.getCrudPanel().getTextFieldValue("Imagen URL");
+
+        // If empty field
+        if (discoString.isBlank() || title.isBlank() ||  releaseDate.isBlank() || imageUrl.isBlank()) {
+            JOptionPane.showMessageDialog(view,
+                    "Por favor, complete los campos obligatorios.",
+                    "Campos Incompletos",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // If not null, safe to parse
+        int discographyId = Integer.parseInt(discoString);
+
         int resp = JOptionPane.showConfirmDialog(view, "¿Seguro de agregar el registro?", "Confirmar creación",
                 JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
         // If selected Yes in JOptionPane
-        if (0 == resp) {
-
-            int discographyId = Integer.parseInt(view.getCrudPanel().getTextFieldValue("ID discografía"));
-            String title = view.getCrudPanel().getTextFieldValue("Título");
-            String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento");
-            String imageUrl = view.getCrudPanel().getTextFieldValue("Imagen URL");
-
-            Album album = new Album(0, discographyId, title, releaseDate, imageUrl);
-            albumDAO.insert(album);
-
-            // Fetch and populate table again
-            loadTableData();
-            view.getCrudPanel().clearFields();
-
-            // Select last item (the just created)
-            int lastRow = view.getCrudPanel().getTable()
-                    .convertRowIndexToView(view.getCrudPanel().getTableModel().getRowCount()
-                            - 1);
-            view.getCrudPanel().getTable().setRowSelectionInterval(lastRow, lastRow);
+        // If not selected Yes in JOptionPane, finish
+        if (resp != JOptionPane.YES_OPTION) {
+            return;
         }
+
+        // Try to insert in DB
+        try{
+
+        Album album = new Album(0, discographyId, title, releaseDate, imageUrl);
+        albumDAO.insert(album);
+
+        // Fetch and populate table again
+        loadTableData();
+        view.getCrudPanel().clearFields();
+
+        // Select last item (the just created)
+        int lastRow = view.getCrudPanel().getTable()
+                .convertRowIndexToView(view.getCrudPanel().getTableModel().getRowCount()
+                        - 1);
+        view.getCrudPanel().getTable().setRowSelectionInterval(lastRow, lastRow);
+
+        // Success message
+             JOptionPane.showMessageDialog(view, "Registro guardado exitosamente.", "Éxito",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (SQLException ex) {
+            // Inform user on database failure
+            JOptionPane.showMessageDialog(view,
+                    "Error al guardar el registro en la base de datos:\n" + ex.getMessage(),
+                    "Error de Base de Datos",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
     }
 
     private void onUpdate() {
@@ -128,9 +160,8 @@ public class AlbumController {
 
             int discographyId = Integer.parseInt(view.getCrudPanel().getTextFieldValue("ID discografía"));
             String title = view.getCrudPanel().getTextFieldValue("Título");
-            String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento");
+            String releaseDate = view.getCrudPanel().getTextFieldValue("Fecha de lanzamiento YYYY-MM-DD");
             String imageUrl = view.getCrudPanel().getTextFieldValue("Imagen URL");
-
 
             int selectedRow = view.getCrudPanel().getTable().getSelectedRow();
             int id = Integer.parseInt(view.getCrudPanel().getTable().getValueAt(selectedRow, 0).toString());
